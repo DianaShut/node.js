@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "rootDir": "./src", //директорія, де будуть знаходитися ts файли
+    "outDir": "./dist", //директорія, куди будуть зберігатися скомпільовані js файли
+    "esModuleInterop": true, //дозволяє використовувати import замість require()
+    "allowSyntheticDefaultImports": true, //можливість використовувати default imports
+    "removeComments": true, //видаляє коментарі з скомпільованого коду
+    "noUnusedLocals": true, //перевіряє, чи всі локальні змінні використовуються
+    "skipLibCheck": true, //пропускає перевірку типів для всіх файлів в node_modules
+    "resolveJsonModule": true, //дозволяє імпортувати json файли
+  }
+}
