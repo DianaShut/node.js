@@ -7,28 +7,20 @@ class UserService {
     return await userRepository.getAllUsers();
   }
 
-  public async createUser(dto: Partial<IUser>): Promise<IUser> {
-    await this.isEmailExist(dto.email); // Перевіряємо, чи існує користувач з таким email.
-    return await userRepository.createUser(dto);
-  }
-
   public async getUserById(userId: string): Promise<IUser> {
     return await this.findUserOrThrow(userId); // Якщо користувач не знайдений, викидаємо помилку.
   }
-  public async updateUser(userId: string, dto: Partial<IUser>): Promise<IUser> {
+  public async getMe(userId: string): Promise<IUser> {
+    return await this.findUserOrThrow(userId);
+  }
+  public async updateMe(userId: string, dto: Partial<IUser>): Promise<IUser> {
     await this.findUserOrThrow(userId);
     return await userRepository.updateUser(userId, dto);
   }
 
-  public async deleteById(userId: string): Promise<void> {
+  public async deleteMe(userId: string): Promise<void> {
     await this.findUserOrThrow(userId);
     await userRepository.deleteUser(userId);
-  }
-  private async isEmailExist(email: string): Promise<void> {
-    const user = await userRepository.getByParams({ email });
-    if (user) {
-      throw new ApiError("email already exist", 409);
-    }
   }
 
   private async findUserOrThrow(userId: string): Promise<IUser> {

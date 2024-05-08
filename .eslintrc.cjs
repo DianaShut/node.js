@@ -22,7 +22,7 @@ module.exports = {
         // "no-unused-vars": ["error", { argsIgnorePattern: "req|res|next" }], //дозволяємо не використані аргументи req, res, next
         "simple-import-sort/imports": "error", //сортування імпортів
         "simple-import-sort/exports": "error", //сортування експортів
-        indent: ["error", 2], //відступи 2 пробіли
+        // indent: ["error", 2], //відступи 2 пробіли
         quotes: ["error", "double"], //подвійні лапки
         semi: ["error", "always"], //крапка з комою
         "@typescript-eslint/interface-name-prefix": "off", //не вимагаємо префікс I в інтерфейсах
@@ -35,7 +35,7 @@ module.exports = {
         "import/first": "error", //імпорти повинні бути першими
         "import/newline-after-import": ["error", { count: 1 }], //після імпортів має бути 1 порожній рядок
         "import/no-duplicates": "error", //не дозволяємо дублювання імпортів
-        "prettier/prettier": ["error", { endOfLine: "auto" }], //використовуємо налаштування prettier
+        // "prettier/prettier": ["error", { endOfLine: "auto" }], //використовуємо налаштування prettier
         // "no-console": "warn", //не дозволяємо використання console.log
         "sort-imports": [
             "error",

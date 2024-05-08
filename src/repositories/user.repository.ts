@@ -6,7 +6,7 @@ import { User } from "../models/user.model";
 class UserRepository {
   // Метод для отримання масиву користувачів.
   public async getAllUsers(): Promise<IUser[]> {
-    return await User.find({}); // Знайти всіх користувачів у базі даних.
+    return await User.find({ isDeleted: false }); // Знайти всіх користувачів у базі даних.
   }
 
   // Метод для створення нового користувача. Приймає dto (Data Transfer Object), який містить часткові дані користувача.

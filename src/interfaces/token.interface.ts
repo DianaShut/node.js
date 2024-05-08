@@ -4,7 +4,8 @@ export interface ITokenPair {
 }
 
 export interface IToken extends ITokenPair {
-  _userId: string;
+  _id?: string; // id токена
+  _userId: string; // id користувача
 }
 
 export interface ITokenResponse extends ITokenPair {
