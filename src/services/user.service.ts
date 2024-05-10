@@ -1,6 +1,7 @@
 import { ApiError } from "../errors/api-error";
 import { IUser } from "../interfaces/user.interface";
 import { userRepository } from "../repositories/user.repository";
+import { smsPrepareService } from "./sms-prepare.service";
 
 class UserService {
   public async getAllUsers(): Promise<IUser[]> {
@@ -19,8 +20,10 @@ class UserService {
   }
 
   public async deleteMe(userId: string): Promise<void> {
-    await this.findUserOrThrow(userId);
-    await userRepository.deleteUser(userId);
+    const user = await this.findUserOrThrow(userId);
+    await userRepository.updateUser(userId, { isDeleted: true });
+
+    await smsPrepareService.deleteAccount(user.phone, { name: user.name });
   }
 
   private async findUserOrThrow(userId: string): Promise<IUser> {
