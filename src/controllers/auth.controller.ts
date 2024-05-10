@@ -1,8 +1,10 @@
 import { NextFunction, Request, Response } from "express";
 
+import { statusCodes } from "../constants/status-code.constants";
 import { IJWTPayload } from "../interfaces/jwt-payload.interface";
 import { IToken } from "../interfaces/token.interface";
 import { IUser } from "../interfaces/user.interface";
+import { AuthPresenter } from "../presenters/auth.presenter";
 import { authService } from "../services/auth.service";
 
 class AuthController {
@@ -10,7 +12,8 @@ class AuthController {
     try {
       const dto = req.body as Partial<IUser>;
       const data = await authService.signUp(dto);
-      res.status(201).json(data);
+      const response = AuthPresenter.toResponseDto(data);
+      res.status(statusCodes.CREATED).json(response);
     } catch (e) {
       next(e);
     }

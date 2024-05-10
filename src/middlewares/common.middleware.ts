@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import { ObjectSchema } from "joi"; // Імпорт класу ApiError для створення помилок API з кастомним повідомленням та статус-кодом.
 import { isObjectIdOrHexString } from "mongoose"; // Імпорт функції перевірки, чи є заданий рядок коректним ObjectId або hex-рядком.
 
+import { statusCodes } from "../constants/status-code.constants";
 import { ApiError } from "../errors/api-error";
 
 // Визначення класу CommonMiddleware, який містить методи middleware для використання в додатку.
@@ -13,7 +14,7 @@ class CommonMiddleware {
       const id = req.params.userId;
       // Перевірка, чи є ID коректним ObjectId або hex-рядком.
       if (!isObjectIdOrHexString(id)) {
-        throw new ApiError("Invalid id", 400);
+        throw new ApiError("Invalid id", statusCodes.BAD_REQUEST);
       }
       // Якщо ID валідний, передаємо виконання наступному обробнику у ланцюжку.
       next();
