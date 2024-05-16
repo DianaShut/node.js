@@ -1,4 +1,5 @@
 import { config } from "../configs/config";
+import { statusCodes } from "../constants/status-code.constants";
 import { ActionTokenTypeEnum } from "../enums/action-token-type.enum";
 import { EmailTypeEnum } from "../enums/email-type.enum";
 import { ApiError } from "../errors/api-error";
@@ -8,7 +9,7 @@ import {
 } from "../interfaces/action-token.interface";
 import { IJWTPayload } from "../interfaces/jwt-payload.interface";
 import { IToken, ITokenResponse } from "../interfaces/token.interface";
-import { IUser } from "../interfaces/user.interface";
+import { IChangePassword, IUser } from "../interfaces/user.interface";
 import { actionTokenRepository } from "../repositories/action-token.repository";
 import { tokenRepository } from "../repositories/token.repository";
 import { userRepository } from "../repositories/user.repository";
@@ -163,6 +164,25 @@ class AuthService {
     ]);
     //Повертає оновленого користувача
     return user;
+  }
+
+  public async changePassword(
+    jwtPayload: IJWTPayload,
+    dto: IChangePassword,
+  ): Promise<void> {
+    const user = await userRepository.getUserById(jwtPayload.userId);
+    const isCompare = await passwordService.comparePassword(
+      dto.oldPassword,
+      user.password,
+    );
+    if (!isCompare) {
+      throw new ApiError("Wrong old password", statusCodes.UNAUTHORIZED);
+    }
+    const newHashedPassword = await passwordService.hashPassword(
+      dto.newPassword,
+    );
+    await userRepository.updateUser(user._id, { password: newHashedPassword });
+    await tokenRepository.deleteByParams({ _userId: user._id });
   }
 
   private async isEmailExist(email: string): Promise<void> {

@@ -43,7 +43,12 @@ export class UserValidator {
     email: this.email.required(),
   });
 
-  public static changePassword = joi.object({
+  public static newPasswordAfterForgot = joi.object({
     password: this.password.required(),
+  });
+
+  public static changePassword = joi.object({
+    oldPassword: this.password.required(),
+    newPassword: this.password.required(),
   });
 }

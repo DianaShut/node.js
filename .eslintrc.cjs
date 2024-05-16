@@ -22,7 +22,7 @@ module.exports = {
         // "no-unused-vars": ["error", { argsIgnorePattern: "req|res|next" }], //дозволяємо не використані аргументи req, res, next
         "simple-import-sort/imports": "error", //сортування імпортів
         "simple-import-sort/exports": "error", //сортування експортів
-        // indent: ["error", 2], //відступи 2 пробіли
+        indent: ["error", 2, {"SwitchCase": 1}], //відступи 2 пробіли
         quotes: ["error", "double"], //подвійні лапки
         semi: ["error", "always"], //крапка з комою
         "@typescript-eslint/interface-name-prefix": "off", //не вимагаємо префікс I в інтерфейсах

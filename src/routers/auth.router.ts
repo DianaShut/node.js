@@ -31,7 +31,7 @@ router.post(
 );
 router.put(
   "/forgot-password", //маршрут для встановлення нового пароля після відновлення
-  commonMiddleware.isBodyValid(UserValidator.changePassword),
+  commonMiddleware.isBodyValid(UserValidator.newPasswordAfterForgot),
   authMiddleware.checkActionToken(ActionTokenTypeEnum.FORGOT),
   authController.newPasswordAfterForgot,
 );
@@ -40,6 +40,13 @@ router.put(
   "/verify", //маршрут для верифікації користувача
   authMiddleware.checkActionToken(ActionTokenTypeEnum.VERIFY),
   authController.verify,
+);
+
+router.patch(
+  "/change-password",
+  commonMiddleware.isBodyValid(UserValidator.changePassword),
+  authMiddleware.checkAccessToken,
+  authController.changePassword,
 );
 
 export const authRouter = router;
