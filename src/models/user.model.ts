@@ -12,6 +12,7 @@ const userSchema = new mongoose.Schema(
     age: { type: Number, required: false },
     role: { type: String, enum: RoleEnum, default: RoleEnum.USER }, //Створюємо поле role, яке приймає значення з перерахування RoleEnum
     isDeleted: { type: Boolean, default: false },
+    avatar: { type: String, required: false },
     isVerified: { type: Boolean, default: false },
   },
   {

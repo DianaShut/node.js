@@ -1,6 +1,10 @@
+import { UploadedFile } from "express-fileupload";
+
+import { FileItemTypeEnum } from "../enums/file-item-type.enum";
 import { ApiError } from "../errors/api-error";
 import { IUser } from "../interfaces/user.interface";
 import { userRepository } from "../repositories/user.repository";
+import { s3Service } from "./s3.service";
 import { smsPrepareService } from "./sms-prepare.service";
 
 class UserService {
@@ -24,6 +28,30 @@ class UserService {
     await userRepository.updateUser(userId, { isDeleted: true });
 
     await smsPrepareService.deleteAccount(user.phone, { name: user.name });
+  }
+
+  public async uploadAvatar(
+    userId: string,
+    avatar: UploadedFile,
+  ): Promise<IUser> {
+    const user = await this.findUserOrThrow(userId);
+    const filePath = await s3Service.uploadFile(
+      avatar,
+      FileItemTypeEnum.USER,
+      user._id,
+    ); // Завантажуємо файл на сервер і отримуємо посилання на файл від сервера AWS S3
+    if (user.avatar) {
+      await s3Service.deleteFile(user.avatar);
+    }
+    return await userRepository.updateUser(userId, { avatar: filePath }); // Оновлюємо дані користувача в базі даних
+  }
+
+  public async deleteAvatar(userId: string): Promise<IUser> {
+    const user = await this.findUserOrThrow(userId);
+    if (user.avatar) {
+      await s3Service.deleteFile(user.avatar);
+    }
+    return await userRepository.updateUser(userId, { avatar: null });
   }
 
   private async findUserOrThrow(userId: string): Promise<IUser> {

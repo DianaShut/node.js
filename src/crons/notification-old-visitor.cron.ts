@@ -28,4 +28,4 @@ const handler = async () => {
   }
 };
 
-export const notifyOldVisitors = new CronJob("* * * 4 * *", handler);
+export const notifyOldVisitors = new CronJob("* * * 4 * *", handler); // Кожні 4 дні

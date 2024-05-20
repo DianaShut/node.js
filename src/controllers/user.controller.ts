@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from "express";
+import { UploadedFile } from "express-fileupload";
 
 import { IJWTPayload } from "../interfaces/jwt-payload.interface";
 import { IUser } from "../interfaces/user.interface";
@@ -56,6 +57,31 @@ class UserController {
       const jwtPayload = req.res.locals.jwtPayload as IJWTPayload;
       await userService.deleteMe(jwtPayload.userId);
       res.sendStatus(204);
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  public async uploadAvatar(req: Request, res: Response, next: NextFunction) {
+    try {
+      const jwtPayload = req.res.locals.jwtPayload as IJWTPayload; //Отримуємо ідентифікатор користувача з токену
+      const avatar = req.files?.avatar as UploadedFile;
+
+      const user = await userService.uploadAvatar(jwtPayload.userId, avatar); //Викликаємо метод uploadAvatar сервісу userService, який приймає ідентифікатор користувача та файл аватара
+      const response = UserPresenter.toPrivateResponseDto(user); //Конвертуємо об'єкт користувача в приватну версію
+      res.status(201).json(response);
+    } catch (e) {
+      next(e);
+    }
+  }
+
+  public async deleteAvatar(req: Request, res: Response, next: NextFunction) {
+    try {
+      const jwtPayload = req.res.locals.jwtPayload as IJWTPayload;
+
+      const user = await userService.deleteAvatar(jwtPayload.userId); //Викликаємо метод deleteAvatar сервісу userService, який приймає ідентифікатор користувача
+      const response = UserPresenter.toPrivateResponseDto(user);
+      res.status(201).json(response);
     } catch (e) {
       next(e);
     }
