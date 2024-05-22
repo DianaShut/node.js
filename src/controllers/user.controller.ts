@@ -2,15 +2,20 @@ import { NextFunction, Request, Response } from "express";
 import { UploadedFile } from "express-fileupload";
 
 import { IJWTPayload } from "../interfaces/jwt-payload.interface";
-import { IUser } from "../interfaces/user.interface";
+import { IUser, IUserListQuery } from "../interfaces/user.interface";
 import { UserPresenter } from "../presenters/user.presenter";
 import { userService } from "../services/user.service";
 
 class UserController {
-  public async getAllUsers(req: Request, res: Response, next: NextFunction) {
+  public async getList(req: Request, res: Response, next: NextFunction) {
     try {
-      const users = await userService.getAllUsers();
-      const response = UserPresenter.toPublicResponseListDto(users);
+      const query = req.query as IUserListQuery; //Отримуємо параметри запиту з об'єкта запиту
+      const [users, total] = await userService.getList(query); //Викликаємо метод getAllUsers сервісу userService, який приймає параметри запиту та повертає масив користувачів та загальну кількість користувачів
+      const response = UserPresenter.toPublicResponseListDto(
+        users,
+        query,
+        total,
+      );
       res.json(response);
     } catch (e) {
       next(e);

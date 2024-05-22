@@ -8,7 +8,7 @@ import { UserValidator } from "../validators/user.validator";
 
 const router = Router();
 
-router.get("/", userController.getAllUsers);
+router.get("/", userController.getList);
 
 router.get("/me", authMiddleware.checkAccessToken, userController.getMe);
 

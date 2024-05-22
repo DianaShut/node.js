@@ -1,5 +1,11 @@
 import { config } from "../configs/config";
-import { IPrivateUser, IPublicUser, IUser } from "../interfaces/user.interface";
+import {
+  IPrivateUser,
+  IPublicUser,
+  IUser,
+  IUserListQuery,
+  IUserListResponse,
+} from "../interfaces/user.interface";
 
 //Визначення класу UserPresenter, який буде містити методи для перетворення даних користувача
 export class UserPresenter {
@@ -16,9 +22,18 @@ export class UserPresenter {
       isVerified: user.isVerified,
     };
   }
-  public static toPublicResponseListDto(users: IUser[]): IPublicUser[] {
-    //Використання методу map для перетворення кожного об'єкта користувача в публічну версію за допомогою методу toPublicResponseDto
-    return users.map(UserPresenter.toPublicResponseDto);
+
+  public static toPublicResponseListDto(
+    users: IUser[],
+    query: IUserListQuery,
+    total: number,
+  ): IUserListResponse {
+    return {
+      ////Використання методу map для перетворення кожного об'єкта користувача в публічну версію за допомогою методу toPublicResponseDto
+      data: users.map(UserPresenter.toPublicResponseDto),
+      ...query,
+      total,
+    };
   }
 
   public static toPrivateResponseDto(user: IUser): IPrivateUser {

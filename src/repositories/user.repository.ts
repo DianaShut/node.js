@@ -1,13 +1,55 @@
 // Імпорт інтерфейсу IUser, який описує структуру об'єкта користувача.
-import { IUser } from "../interfaces/user.interface";
+import { FilterQuery, SortOrder } from "mongoose";
+
+import { OrderEnum } from "../enums/order.enum";
+import { UserListOrderEnum } from "../enums/user-list-order.enum";
+import { ApiError } from "../errors/api-error";
+import { IUser, IUserListQuery } from "../interfaces/user.interface";
 import { Token } from "../models/token.model";
 import { User } from "../models/user.model";
 
-// Визначення класу UserRepository, який містить методи для роботи з користувачами.
+// Метод повертає список користувачів та загальну кількість користувачів, які відповідають критеріям запиту.
 class UserRepository {
   // Метод для отримання масиву користувачів.
-  public async getAllUsers(): Promise<IUser[]> {
-    return await User.find({ isDeleted: false }); // Знайти всіх користувачів у базі даних.
+  public async getList(query: IUserListQuery): Promise<[IUser[], number]> {
+    const {
+      page = 1, // Номер сторінки за замовчуванням
+      limit = 10,
+      order = OrderEnum.ASC, // Порядок сортування за замовчуванням
+      orderBy = UserListOrderEnum.NAME, // Поле сортування за замовчуванням
+      search, // Параметр пошуку
+    } = query;
+
+    const filterObj: FilterQuery<IUser> = { isDeleted: false }; // filterObj – об'єкт фільтрації для MongoDB, який фільтрує лише невидалених користувачів
+    const sortObj: { [key: string]: SortOrder } = {}; // Об'єкт для сортування користувачів за певним полем.
+
+    if (search) {
+      filterObj.name = { $regex: search, $options: "i" }; // Якщо параметр search присутній, додається умова для фільтрації користувачів, де ім'я містить рядок пошуку, без урахування регістру.
+      // filterObj.$or = [
+      //   { name: { $regex: search, $options: "i" } },
+      //   { email: { $regex: search, $options: "i" } },
+      // ];
+    }
+
+    if (orderBy) {
+      switch (orderBy) {
+        case UserListOrderEnum.NAME:
+          sortObj.name = order; // Додаємо поле name в об'єкт сортування
+          break;
+        case UserListOrderEnum.AGE:
+          sortObj.age = order; // Додаємо поле age в об'єкт сортування
+          break;
+        default:
+          throw new ApiError("Invalid orderBy", 400);
+      }
+    }
+
+    const skip = (page - 1) * limit; // Вираховується кількість записів, які слід пропустити для реалізації пагінації.
+    //Виконуються два запити до бази даних паралельно: один для отримання користувачів, інший для підрахунку загальної кількості користувачів.
+    return await Promise.all([
+      User.find(filterObj).sort(sortObj).limit(limit).skip(skip),
+      User.countDocuments(filterObj),
+    ]);
   }
 
   // Метод для створення нового користувача. Приймає dto (Data Transfer Object), який містить часткові дані користувача.

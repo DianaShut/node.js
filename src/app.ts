@@ -1,7 +1,9 @@
 import express, { NextFunction, Request, Response } from "express";
 import fileupload from "express-fileupload";
 import * as mongoose from "mongoose";
+import swaggerUi from "swagger-ui-express";
 
+import swaggerDocument from "../docs/swagger.json"; // Підключаємо файл з документацією
 import { config } from "./configs/config";
 import { runCronJobs } from "./crons";
 import { ApiError } from "./errors/api-error";
@@ -16,6 +18,7 @@ app.use(fileupload());
 
 app.use("/auth", authRouter);
 app.use("/users", userRouter);
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument)); // Додаємо маршрут для відображення документації
 
 app.use(
   "*", // Обробник помилок, який відправляє відповідь з HTTP статусом 404 та повідомленням "Not found".
